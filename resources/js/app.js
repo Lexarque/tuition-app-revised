@@ -7,6 +7,8 @@
 import './bootstrap';
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/inertia-vue3'
+import { createPopper } from '@popperjs/core';
+import bootstrap from 'bootstrap'
 
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
@@ -24,6 +26,8 @@ createInertiaApp({
       createApp({ 
         render: () => h(App, props) })
         .use(plugin)
+        .use(createPopper)
+        .use(bootstrap)
         .mount(el)
     },
   })
