@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class LoginRequest extends FormRequest
 {
@@ -26,9 +28,34 @@ class LoginRequest extends FormRequest
         return [
             'email' => 'required|email',
             'password' => 'required|min:6',
-            'is_student' => 'bool|required',
-            'nis' => 'required_if:is_student,1|numeric',
-            'nisn' => 'required_if:is_student,1|numeric',
         ];
+    }
+
+    /**
+     * Authorize the user by email and password
+     *
+     * @return array<string, mixed>
+     */
+    public function validateByDB(): \Illuminate\Contracts\View\View|array
+    {
+        $user = User::where('email', $this->email)->first();
+
+        if (!$user) {
+            return [
+                'message' => 'Akun dengan email tersebut tidak ditemukan.'
+            ];
+        }
+
+        $credentials = $this->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $user->session()->regenerate();
+
+            return redirect()->intended('dashboard');
+        };
+
+        return back()->withErrors([
+            'password' => 'Password yang anda masukkan salah.',
+        ])->onlyInput('password');
     }
 }
