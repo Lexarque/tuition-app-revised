@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -20,11 +20,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'username',
         'email',
         'password',
         'nis',
         'nisn',
+        'address',
+        'phone_number',
+        'student_class_id',
+        'role_id'
     ];
 
     /**
@@ -35,4 +38,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @return BelongsTo
+     */
+    public function studentClass() : BelongsTo
+    {
+        return $this->belongsTo(StudentClass::class);
+    }
 }
